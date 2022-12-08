@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 const uri = "mongodb+srv://webDevNur:Cfs3NocoPff6TFYZ@cluster0.bsyqjya.mongodb.net/simpleProduct?retryWrites=true&w=majority&ssl=true";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -31,6 +32,14 @@ client.connect(err => {
     collection.insertOne(product);
     res.send('success');
     console.log('data added to database')
+  })
+
+  app.delete('/delete/:id', (req, res) =>{
+    console.log(req.params.id)
+    collection.deleteOne({_id: ObjectId(req.params.id)})
+    .then(result =>{
+      console.log('item deleted successfully')
+    })
   })
   
 });

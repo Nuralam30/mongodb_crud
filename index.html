@@ -40,13 +40,25 @@
                 const item = document.createElement('div');
                 item.innerHTML = `<h3> ${pd.Pname} </h3>
                                 <p>Price: ${pd.price} </p>
-                                <p>Quantity: ${pd.quantity} </p>`
+                                <p>Quantity: ${pd.quantity} </p>
+                                <button> Update </button>
+                                <button onclick="deleteProduct('${pd._id}')"> Delete </button>`
                 
                 container.appendChild(item)
             });
-
-            console.log(products)
         });
+
+
+        function deleteProduct(id) {
+            fetch(`/delete/${id}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(result => {
+                console.log('deleted successfully')
+            })
+        }
+
     </script>
 </body>
 </html>
