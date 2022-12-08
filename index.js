@@ -27,6 +27,8 @@ client.connect(err => {
     })
   })
 
+
+  // insert data 
   app.post('/addProduct', (req, res) =>{
     const product = req.body;
     collection.insertOne(product);
@@ -34,6 +36,30 @@ client.connect(err => {
     console.log('data added to database')
   })
 
+
+  // load data info
+  app.get('/product/:id', (req, res) =>{
+    collection.find({_id: ObjectId(req.params.id)})
+    .toArray( (err, documents) =>{
+      res.send(documents[0]);
+    })
+  })
+
+
+  //update data
+  app.patch('/update/:id', (req, res) =>{
+    collection.updateOne({_id: ObjectId(req.params.id)},
+    {
+      $set: {price: req.body.price, quantity: req.body.quantity}
+    })
+    .then(result =>{
+      console.log(result)
+    })
+  })
+
+  
+
+  // delete data 
   app.delete('/delete/:id', (req, res) =>{
     console.log(req.params.id)
     collection.deleteOne({_id: ObjectId(req.params.id)})
