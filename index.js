@@ -15,13 +15,22 @@ app.get('/', (req, res) =>{
     res.sendFile(__dirname + '/index.html')
 });
 
+
 client.connect(err => {
   const collection = client.db("simpleProduct").collection("products");
 
-  app.post('/addProduct', (req, res) =>{
+  app.get('/products', (req, res) =>{
+    collection.find({})
+    .toArray( (err, documents) =>{
+      res.send(documents);
+    })
+  })
 
+  app.post('/addProduct', (req, res) =>{
     const product = req.body;
-    console.log(product)
+    collection.insertOne(product);
+    res.send('success');
+    console.log('data added to database')
   })
   
 });

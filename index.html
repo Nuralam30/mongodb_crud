@@ -5,6 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>learn mongo </title>
+
+    <style>
+        #products{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #products div{
+            min-width: 250px;
+            border: 2px solid black;
+            padding: 20px;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
     <h2>Load data from database</h2>
@@ -14,5 +27,26 @@
         <input type="text" placeholder="quantity" name="quantity">
         <button type="submit">Add Product</button>
     </form>
+
+    <div id="products"></div>
+
+    <script>
+        const container = document.getElementById('products');
+
+        fetch('/products')
+        .then(res => res.json())
+        .then(products =>{
+            products.forEach( pd => {
+                const item = document.createElement('div');
+                item.innerHTML = `<h3> ${pd.Pname} </h3>
+                                <p>Price: ${pd.price} </p>
+                                <p>Quantity: ${pd.quantity} </p>`
+                
+                container.appendChild(item)
+            });
+
+            console.log(products)
+        });
+    </script>
 </body>
 </html>
