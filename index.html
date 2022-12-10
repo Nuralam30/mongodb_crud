@@ -12,7 +12,7 @@
             flex-wrap: wrap;
         }
         #products div{
-            min-width: 250px;
+            min-width: 150px;
             border: 2px solid black;
             padding: 20px;
             margin: 10px;
@@ -32,37 +32,42 @@
     <div id="update"></div>
 
     <script>
-        const container = document.getElementById('products');
+        function loadAllProducts(){
+            fetch('/products')
+            .then(res => res.json())
+            .then(products =>{
+                const container = document.getElementById('products');
+                container.innerHTML = '';
+                products.forEach( pd => {
+                    const item = document.createElement('div');
 
-        fetch('/products')
-        .then(res => res.json())
-        .then(products =>{
-            products.forEach( pd => {
-                const item = document.createElement('div');
-                item.innerHTML = `<h3> ${pd.Pname} </h3>
-                                <p>Price: ${pd.price} </p>
-                                <p>Quantity: ${pd.quantity} </p>
-                                <button onclick="loadProduct('${pd._id}')"> Update </button>
-                                <button onclick="deleteProduct('${pd._id}')"> Delete </button>`
-                
-                container.appendChild(item)
+                    item.innerHTML = `<h3> ${pd.Pname} </h3>
+                                    <p>Price: ${pd.price} </p>
+                                    <p>Quantity: ${pd.quantity} </p>
+                                    <button onclick="loadProduct('${pd._id}')"> Update </button>
+                                    <button onclick="deleteProduct(event, '${pd._id}')"> Delete </button>`
+                    
+                    container.appendChild(item);
+                })
             });
-        });
+        }
+        
+        loadAllProducts();
 
         function loadProduct(id){
             fetch(`/product/${id}`)
             .then(res => res.json())
-            .then(data =>{
-                console.log(data);
+            .then(result =>{
 
                 const container = document.getElementById('update');
-                container.innerHTML = `<h3>Update ${data._id}</h3>
+                
+                container.innerHTML = `<h3>Update ${result._id}</h3>
                 <br >
-                Price: <input type="text" value=${data.price} name="price" id="price" >
+                Price: <input type="text" value=${result.price} name="price" id="price" >
                 <br >
-                Quantity: <input type="text" value=${data.quantity} name="quantity" id="quantity" >
+                Quantity: <input type="text" value=${result.quantity} name="quantity" id="quantity" >
                 <br >
-                <button onclick="updateProduct('${data._id}')"> Submit </button>
+                <button onclick="updateProduct('${result._id}')"> Submit </button>
                 `;
                 
             })
@@ -70,7 +75,7 @@
 
         function updateProduct(id){
             const price = document.getElementById('price').value;
-            const quantity = document.getElementById('quantity').valuel;
+            const quantity = document.getElementById('quantity').value;
             const product = {id, price, quantity};
 
             fetch(`/update/${id}`, {
@@ -79,18 +84,25 @@
                 body: JSON.stringify(product)
             })
             .then(res => res.json())
-            .then(data =>{
-                console.log('data updated')
+            .then(result =>{
+                if(result){
+                    loadAllProducts();
+                    window.alert('data updated successfully');
+                    document.getElementById('update').innerHTML = '';
+                }
             })
         }
 
-        function deleteProduct(id) {
+        function deleteProduct(event, id) {
             fetch(`/delete/${id}`, {
                 method: 'DELETE'
             })
             .then(res => res.json())
             .then(result => {
-                console.log('deleted successfully')
+                if(result){
+                    event.target.parentNode.style.display = 'none';
+                    window.alert('Deleted Successfully')
+                }
             })
         }
 
